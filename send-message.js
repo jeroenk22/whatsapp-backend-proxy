@@ -1,0 +1,31 @@
+import axios from "axios";
+
+export default async function handler(req, res) {
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Method Not Allowed" });
+  }
+
+  const { recipient, message } = req.query;
+  const API_KEY = process.env.TEXTMEBOT_API_KEY; // De API-key is beveiligd in Vercel
+
+  if (!recipient || !message) {
+    return res.status(400).json({ error: "Recipient and message required" });
+  }
+
+  try {
+    const apiUrl = `https://api.textmebot.com/send.php?recipient=${recipient}&apikey=${API_KEY}&text=${encodeURIComponent(
+      message
+    )}`;
+
+    const response = await axios.get(apiUrl);
+
+    return res.status(200).json({ success: true, data: response.data });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({
+        error: "Fout bij doorsturen van bericht",
+        details: error.message,
+      });
+  }
+}
