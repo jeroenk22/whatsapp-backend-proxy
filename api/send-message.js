@@ -1,13 +1,12 @@
 import axios from "axios";
 
 export default async function handler(req, res) {
-  console.log("API online!");
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
   const { recipient, message } = req.query;
-  const API_KEY = process.env.TEXTMEBOT_API_KEY; // De API-key is beveiligd in Vercel
+  const API_KEY = process.env.TEXTMEBOT_API_KEY; // API-key beveiligd in Vercel
 
   if (!recipient || !message) {
     return res.status(400).json({ error: "Recipient and message required" });
