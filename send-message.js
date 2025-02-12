@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export default async function handler(req, res) {
+  console.log("API online!");
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
@@ -21,11 +22,9 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ success: true, data: response.data });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        error: "Fout bij doorsturen van bericht",
-        details: error.message,
-      });
+    return res.status(500).json({
+      error: "Fout bij doorsturen van bericht",
+      details: error.message,
+    });
   }
 }
