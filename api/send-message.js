@@ -1,6 +1,16 @@
 import axios from "axios";
 
 export default async function handler(req, res) {
+  // ✅ Voeg CORS headers toe
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // ✅ OPTIONS-verzoeken direct beantwoorden voor CORS
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   try {
     if (req.method !== "GET") {
       return res.status(405).json({ error: "Method Not Allowed" });
@@ -17,6 +27,7 @@ export default async function handler(req, res) {
     const apiUrl = `https://api.textmebot.com/send.php?recipient=${recipient}&apikey=${API_KEY}&text=${encodeURIComponent(
       message
     )}`;
+
     console.log(`Versturen naar: ${apiUrl}`); // Log de URL
 
     const response = await axios.get(apiUrl);
