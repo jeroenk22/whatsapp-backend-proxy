@@ -28,7 +28,7 @@ export default async function handler(req, res) {
       message
     )}`;
 
-    console.log(`Versturen naar: ${apiUrl}`); // Log de URL
+    //console.log(`Versturen naar: ${apiUrl}`); // Log de URL
 
     const response = await axios.get(apiUrl);
 
