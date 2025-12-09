@@ -51,13 +51,21 @@ export default async function handler(req, res) {
       return res.status(405).json({ error: "Method Not Allowed" });
     }
 
-    const { recipient, message, token } = req.query;
+    const { recipient, message, token: rawToken } = req.query;
+    const token = (rawToken || "").trim();
+
     const API_KEY = process.env.TEXTMEBOT_API_KEY;
-    const INTERNAL_TOKEN = process.env.INTERNAL_API_TOKEN;
+    const INTERNAL_TOKEN = (process.env.INTERNAL_API_TOKEN || "").trim();
 
     // ✅ Token check
-    if (!INTERNAL_TOKEN || token !== INTERNAL_TOKEN) {
-      console.warn("Unauthorized request (invalid token)", { origin });
+    if (!INTERNAL_TOKEN || !token || token !== INTERNAL_TOKEN) {
+      console.warn("Unauthorized request (invalid token)", {
+        origin,
+        hasToken: !!token,
+        hasEnvToken: !!INTERNAL_TOKEN,
+        tokenLength: token.length,
+        envTokenLength: INTERNAL_TOKEN.length,
+      });
       return res.status(401).json({ error: "Unauthorized" });
     }
 
