@@ -99,7 +99,10 @@ export default async function handler(req, res) {
       `&apikey=${encodeURIComponent(API_KEY)}` +
       `&text=${encodeURIComponent(message)}`;
 
-    const response = await axios.get(apiUrl);
+    // ✅ Timeout toevoegen zodat we vóór Vercel’s 10s-limit klaar zijn
+    const response = await axios.get(apiUrl, {
+      timeout: 8000, // 8 seconden
+    });
 
     return res.status(200).json({
       success: true,
@@ -107,6 +110,15 @@ export default async function handler(req, res) {
       data: response.data,
     });
   } catch (error) {
+    // Specifieke afhandeling als TextMeBot te langzaam is
+    if (error.code === "ECONNABORTED") {
+      console.error("Upstream timeout: TextMeBot did not respond in time");
+      return res.status(504).json({
+        error: "Upstream timeout",
+        details: "TextMeBot did not respond in time",
+      });
+    }
+
     console.error("Server error:", error.message);
     return res.status(500).json({
       error: "Fout bij doorsturen van bericht",
